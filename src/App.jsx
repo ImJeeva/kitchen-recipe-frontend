@@ -13,7 +13,7 @@ import { Recipelist } from "./Recipelist";
 import { RecipeDetails } from "./RecipeDetails";
 import { Addrecipe } from "./Addrecipe";
 // import { Search } from "./Search";
-import { Indian } from "./indian";
+import { Indian } from "./Indian";
 import { Mexican } from "./Mexican";
 import { Italian } from "./Italian";
 import { German } from "./German";
