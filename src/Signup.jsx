@@ -42,7 +42,7 @@ export function Signup() {
   });
 
   const addsignup = async (value) => {
-    const data = await fetch(`${API}/signup`, {
+    const data = await fetch(`${API}/api/signup`, {
       method: "POST",
       headers: { "Content-type": "application/json" },
       body: JSON.stringify(value)

@@ -33,7 +33,7 @@ export function Login() {
   });
 
   const addlogin = async (value) => {
-    const data = await fetch(`${API}/userLogin`, {
+    const data = await fetch(`${API}/api/userLogin`, {
       method: "POST",
       headers: { "Content-type": "application/json" },
       body: JSON.stringify(value)
