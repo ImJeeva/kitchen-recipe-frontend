@@ -5,16 +5,14 @@
       "use": "@vercel/node"
     },
     {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": { "outputDirectory": "dist" }
+      "src": "dist/**",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/index.js" },
-    { "src": "/(.*)", "dest": "/index.html" }
+    { "src": "/(.*)", "dest": "/dist/$1" }
   ],
-  "env": {
-    "MONGO_URL": "@mongo_url"
-  }
+  "installCommand": "npm install",
+  "buildCommand": "npm run build"
 }
