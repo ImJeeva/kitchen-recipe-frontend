@@ -1,10 +1,5 @@
 {
-  "version": 2,
-  "builds": [
-    { "src": "api/index.js", "use": "@vercel/node" }
-  ],
-  "routes": [
-    { "src": "/api/(.*)", "dest": "/api/index.js" },
-    { "src": "/(.*)", "dest": "/index.html", "status": 200 }
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "https://kitchen-recipe-backend-lo63nhrpg-jeeva-s-projects1.vercel.app/:path*" }
   ]
 }
