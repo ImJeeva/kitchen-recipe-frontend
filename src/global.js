@@ -1,1 +1,1 @@
-export const API = "https://kitchen-recipe-backend-53ovl2i5g-jeeva-s-projects1.vercel.app";
+export const API = "https://kitchen-recipe-backend-git-main-jeeva-s-projects1.vercel.app";
