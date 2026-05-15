@@ -1,0 +1,22 @@
+->recipelist page,add recipe page,recipe details page,app.js page
+
+-> first ithuku thevaya ellame antha blog la iruku.
+-> atha pathu pannale pothum.
+
+-> prefetch method:
+   *ithu vanthu rompa nalla technique and ithu antha movie ah hover pannum pothe request send pannirum
+   so nammaluku takkunu information vanthurum.
+
+-> PUSH & PULL METHOD:
+
+1.PUSH:
+  *ithu enna na namma recipelist vangum pothe separate details ah yum vangurom so ithu takkunu load akum.
+  *ithu recipelist page la eluthuvom.
+2.PULL:
+  *ithu namma recipedetails page la eluthuvom.
+  *ithu namma erkanave call panna recipelist cache la irukum la athula irunthu vanguvom.
+
+CONS:
+ *intha push and pull technique vanthu recipelist um details um same ah iruntha mattume work akum .
+ * illana PREFETCH technique than use pannanum.
+ 
