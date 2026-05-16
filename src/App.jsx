@@ -312,6 +312,7 @@ export default function App(){
  <Route  path="/quantity"   element={<Quantity />} />
  <Route  path="/about"   element={<><About /><Footer /></>} />
  <Route  path="*"   element={<Notfound />} />
+ </Routes>
         </Typography>
       </Main>
       
