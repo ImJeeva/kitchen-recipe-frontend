@@ -263,7 +263,6 @@ export default function App(){
      <Routes>
 
  <Route  path="/allrecipe"   element={<ProductedRoute><Recipelist /></ProductedRoute>} />
- <Route  path="*"   element={<Notfound />} />
  <Route  path="/"   element={<Home />} />
  <Route  path="/signup"   element={<Signup />} />
  <Route  path="/login"   element={<Login />} />
@@ -272,21 +271,23 @@ export default function App(){
  <Route  path="/counter"   element={<Counter />} />
  <Route  path="/recipedetails/:id"   element={<RecipeDetails />} />
  <Route  path="/addrecipe"   element={<Addrecipe />} />
- {/* <Route  path="/search"   element={<Search />} /> */}
  <Route  path="/cuisines/indian"   element={<Indian />} />
  <Route  path="/cuisines/mexican"   element={<Mexican />} />
  <Route  path="/cuisines/italian"   element={<Italian />} />
  <Route  path="/cuisines/german"   element={<German />} />
-  <Route  path="/cuisines/greek"   element={<Greek />} />
-  <Route  path="/cuisines/chinese"   element={<Chinese />} />
+ <Route  path="/cuisines/greek"   element={<Greek />} />
+ <Route  path="/cuisines/chinese"   element={<Chinese />} />
  <Route  path="/cuisines/japanese"   element={<Japanese />} />
  <Route  path="/cuisines/turkish"   element={<Turkish />} />
  <Route  path="/cuisines/spanish"   element={<Spanish />} />
+ <Route  path="/cuisines/french"   element={<French />} />
+ <Route  path="/cuisines/american"   element={<American />} />
+ <Route  path="/cuisines/thai"   element={<Thai />} />
  <Route  path="/ingredients/chicken"   element={<Chicken />} />
  <Route  path="/ingredients/cheese"   element={<Cheese />} />
-  <Route  path="/ingredients/vegitable"   element={<Vegitable />} />
-  <Route  path="/ingredients/choco"   element={<Choco />} />
-  <Route  path="/ingredients/fish"   element={<Fish />} />
+ <Route  path="/ingredients/vegitable"   element={<Vegitable />} />
+ <Route  path="/ingredients/choco"   element={<Choco />} />
+ <Route  path="/ingredients/fish"   element={<Fish />} />
  <Route  path="/ingredients/mutton"   element={<Mutton />} />
  <Route  path="/ingredients/seafood"   element={<Seafood />} />
  <Route  path="/ingredients/pasta"   element={<Pasta />} />
@@ -304,13 +305,13 @@ export default function App(){
  <Route  path="/quick/data"   element={<Quik />} />
  <Route  path="/rated/data"   element={<Rated />} />
  <Route  path="/highquantity/data"   element={<High />} />
-<Route  path="/lowquantity/data"   element={<Low />} />
-<Route  path="/cuisine"   element={<Cuisine />} />
-<Route  path="/ingredient"   element={<Ingredient />} />
-<Route  path="/meal"   element={<Meal />} />
-<Route  path="/quantity"   element={<Quantity />} />
-  <Route  path="/about"   element={<><About /><Footer /></>} />
- </Routes>
+ <Route  path="/lowquantity/data"   element={<Low />} />
+ <Route  path="/cuisine"   element={<Cuisine />} />
+ <Route  path="/ingredient"   element={<Ingredient />} />
+ <Route  path="/meal"   element={<Meal />} />
+ <Route  path="/quantity"   element={<Quantity />} />
+ <Route  path="/about"   element={<><About /><Footer /></>} />
+ <Route  path="*"   element={<Notfound />} />
         </Typography>
       </Main>
       

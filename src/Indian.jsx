@@ -39,12 +39,12 @@ const cuisineDescriptions = {
   american: 'Diverse melting pot bringing BBQ, burgers, and soul food together'
 };
 
-export function CuisinePage() {
+export function CuisinePage({ type: propType }) {
   const navigate = useNavigate();
-  const { type } = useParams();
+  const { type: paramType } = useParams();
   const [recipelist, setRecipelist] = useState([]);
 
-  const cuisineName = type || 'indian';
+  const cuisineName = propType || paramType || 'indian';
   const cuisineImage = cuisineImages[cuisineName] || cuisineImages.indian;
   const cuisineDesc = cuisineDescriptions[cuisineName] || cuisineDescriptions.indian;
   const displayName = cuisineName.charAt(0).toUpperCase() + cuisineName.slice(1) + ' Cuisines';
