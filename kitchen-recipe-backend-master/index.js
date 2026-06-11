@@ -126,11 +126,18 @@ app.get('/cuisines/data', async (req, res) => {
 
 app.get('/ingredients/data', async (req, res) => {
   try {
-    const { ingredient } = req.query;
+    const { ingredient, main_content } = req.query;
     const db = await getDB();
-    const result = await db.collection('recipe').find({ 
-      ingredients: { $regex: ingredient, $options: 'i' } 
-    }).toArray();
+    let result;
+    if (main_content) {
+      result = await db.collection('recipe').find({ 
+        main_content: { $regex: main_content, $options: 'i' } 
+      }).toArray();
+    } else {
+      result = await db.collection('recipe').find({ 
+        ingredients: { $regex: ingredient, $options: 'i' } 
+      }).toArray();
+    }
     return res.status(200).json(result);
   } catch (err) {
     return res.status(500).json({ message: err.message });
