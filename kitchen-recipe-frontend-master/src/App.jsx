@@ -23,6 +23,7 @@ import { Mutton } from "./Mutton";
 import { Seafood } from "./Seafood";
 import { Pasta } from "./Pasta";
 import { Egg } from "./Egg";
+import { Beef } from "./Beef";
 import { Lunch } from "./Lunch";
 import { Breakfast } from "./Breakfast";
 import { Dinner } from "./Dinner";
