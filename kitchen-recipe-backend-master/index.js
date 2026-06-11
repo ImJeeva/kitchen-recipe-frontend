@@ -124,6 +124,8 @@ app.get('/cuisines/data', async (req, res) => {
   }
 });
 
+app.get('/test', (req, res) => res.json({ ok: true, version: 2 }));
+
 app.get('/ingredients/data', async (req, res) => {
   try {
     const { ingredient, main_content } = req.query;
