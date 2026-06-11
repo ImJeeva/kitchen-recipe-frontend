@@ -47,7 +47,7 @@ function IngredientPage({ name, img, title }) {
   const [recipelist, setRecipelist] = useState([]);
 
   useEffect(() => {
-    fetch(`${API}/ingredients/data?main_content=${name}`)
+    fetch(`${API}/ingredients/data?ingredient=${name}`)
       .then((val) => val.json())
       .then((list) => {
         if (Array.isArray(list)) setRecipelist(list);
