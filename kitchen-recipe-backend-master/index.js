@@ -129,13 +129,12 @@ app.get('/ingredients/data', async (req, res) => {
     const { ingredient, main_content } = req.query;
     const db = await getDB();
     let result;
+    const searchField = main_content ? { main_content } : { ingredients: { $regex: ingredient, $options: 'i' } };
     if (main_content) {
-      result = await db.collection('recipe').find({ 
-        main_content: { $regex: new RegExp(main_content, 'i') } 
-      }).toArray();
+      result = await db.collection('recipe').find({ main_content }).toArray();
     } else {
       result = await db.collection('recipe').find({ 
-        ingredients: { $regex: new RegExp(ingredient, 'i') } 
+        ingredients: { $regex: ingredient, $options: 'i' } 
       }).toArray();
     }
     return res.status(200).json(result);
