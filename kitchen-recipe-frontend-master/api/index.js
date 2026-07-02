@@ -99,20 +99,6 @@ router.get('/allrecipe', async (req, res) => {
   }
 });
 
-router.get('/:id', async (req, res) => {
-  try {
-    const { ObjectId } = require('mongodb');
-    const db = await getDB();
-    const recipe = await db.collection('recipe').findOne({ _id: new ObjectId(req.params.id) });
-    if (!recipe) {
-      return res.status(404).json({ message: 'Recipe not found' });
-    }
-    return res.status(200).json(recipe);
-  } catch (err) {
-    return res.status(500).json({ message: err.message });
-  }
-});
-
 router.get('/cuisines/data', async (req, res) => {
   try {
     const cuisines = req.query.cuisines || req.query.cuisine;
@@ -236,6 +222,20 @@ router.post('/reset/:id/:token', async (req, res) => {
     return res.status(200).json({ status: 'Password reset successful' });
   } catch (err) {
     return res.status(500).json({ status: err.message });
+  }
+});
+
+router.get('/:id', async (req, res) => {
+  try {
+    const { ObjectId } = require('mongodb');
+    const db = await getDB();
+    const recipe = await db.collection('recipe').findOne({ _id: new ObjectId(req.params.id) });
+    if (!recipe) {
+      return res.status(404).json({ message: 'Recipe not found' });
+    }
+    return res.status(200).json(recipe);
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
   }
 });
 
