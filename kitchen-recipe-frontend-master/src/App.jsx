@@ -4,9 +4,8 @@
 
 import "./App.css";
 import { Counter } from "./Counter";
-import {Routes, Route,useNavigate, Navigate } from 'react-router-dom';
+import {Routes, Route,useNavigate, Navigate, Outlet } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
-import Button from '@mui/material/Button';
 import Toolbar from '@mui/material/Toolbar';
 import { Logo } from "./Logo";
 import { Recipelist } from "./Recipelist";
@@ -43,8 +42,6 @@ import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import CssBaseline from '@mui/material/CssBaseline';
-import MuiAppBar from '@mui/material/AppBar';
-
 import List from '@mui/material/List';
 
 import Divider from '@mui/material/Divider';
@@ -57,13 +54,18 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 
-import { Typography } from "@mui/material";
 import SynagogueIcon from '@mui/icons-material/Synagogue';
 import BakeryDiningIcon from '@mui/icons-material/BakeryDining';
 import LunchDiningIcon from '@mui/icons-material/LunchDining';
 import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
 import RamenDiningIcon from '@mui/icons-material/RamenDining';
 import FastfoodIcon from '@mui/icons-material/Fastfood';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import InfoIcon from '@mui/icons-material/Info';
+import LoginIcon from '@mui/icons-material/Login';
+import LogoutIcon from '@mui/icons-material/Logout';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { Cuisine } from "./Cuisine";
 import { Ingredient } from "./Ingredient";
 import { Meal } from "./Meal";
@@ -76,6 +78,8 @@ import { Login } from "./Login";
 import { Forgot } from "./Forgot";
 import { Reset } from "./Reset";
 import { Home } from "./Home";
+import { Breadcrumbs } from "./Breadcrumbs";
+import { ScrollToTop } from "./ScrollToTop";
 import { useStateValue } from "./StateProvider";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -84,40 +88,11 @@ export const queryClient = new QueryClient();
 
 const drawerWidth = 240;
 
-const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
-  ({ theme, open }) => ({
-    flexGrow: 1,
-    padding: theme.spacing(3),
-    transition: theme.transitions.create('margin', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    marginLeft: `-${drawerWidth}px`,
-    ...(open && {
-      transition: theme.transitions.create('margin', {
-        easing: theme.transitions.easing.easeOut,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-      marginLeft: 0,
-    }),
-  }),
-);
-
-const AppBars = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== 'open',
-})(({ theme, open }) => ({
-  transition: theme.transitions.create(['margin', 'width'], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  ...(open && {
-    width: `calc(100% - ${drawerWidth}px)`,
-    marginLeft: `${drawerWidth}px`,
-    transition: theme.transitions.create(['margin', 'width'], {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
+const Main = styled('main')(({ theme }) => ({
+  flexGrow: 1,
+  width: '100%',
+  minWidth: 0,
+  padding: theme.spacing(3),
 }));
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -136,6 +111,14 @@ export default function App(){
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const navigate=useNavigate();
+
+  React.useEffect(() => {
+    const savedUsername = localStorage.getItem("username");
+    if (!user && localStorage.getItem("token") && savedUsername) {
+      dispatch({ type: "SET_USER", user: savedUsername });
+    }
+  }, []);
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -152,31 +135,22 @@ export default function App(){
   return(
     <QueryClientProvider client={queryClient}>
       <ReactQueryDevtools initialIsOpen={false} />
-    <div  >
-   
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar color="secondary" position="fixed" open={open}>
-        <Toolbar>
+      <AppBar color="secondary" position="fixed">
+        <Toolbar sx={{ gap: 1 }}>
           <IconButton
             color="inherit"
             aria-label="open drawer"
             onClick={handleDrawerOpen}
             edge="start"
-            sx={{ mr: 2, ...(open && { display: 'none' }) }}
+            sx={{ mr: 1 }}
           >
             <MenuIcon />
           </IconButton>
-      <Button  onClick={()=>navigate("/allrecipe")} color="inherit"><Logo/></Button>
-     <Button sx={{marginLeft:"auto"}} onClick={()=>navigate("/signup")} color="inherit">{user?"":"Signup"}</Button>
-    {user?<Button onClick={()=>logout()} color="inherit">Logout</Button>:
-    <Button onClick={()=>navigate("/login")} color="inherit">Login</Button>
-    }
-       <Button onClick={()=>navigate(localStorage.getItem("token") ? "/allrecipe" : "/")} color="inherit">Recipes</Button>  
-     <Button onClick={()=>navigate("/addrecipe")} color="inherit">ADD</Button>      
-     <Button onClick={()=>navigate("/about")} color="inherit">About Us</Button>  
-
-        
+          <Box onClick={() => navigate("/")} sx={{ cursor: 'pointer', color: 'inherit' }}>
+            <Logo />
+          </Box>
         </Toolbar>
       </AppBar>
 
@@ -189,9 +163,11 @@ export default function App(){
             boxSizing: 'border-box',
           },
         }}
-        variant="persistent"
+        variant="temporary"
         anchor="left"
         open={open}
+        onClose={handleDrawerClose}
+        ModalProps={{ keepMounted: true }}
       >
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
@@ -200,75 +176,63 @@ export default function App(){
         </DrawerHeader>
         <Divider />
         <List>
-        <ListItem className="menuicon"  disablePadding  onClick={()=>navigate("/cuisine")}>
+          {[
+            { label: 'Recipes', path: "/allrecipe", icon: <MenuBookIcon /> },
+            { label: 'Add Recipe', path: '/addrecipe', icon: <AddCircleIcon /> },
+            { label: 'About Us', path: '/about', icon: <InfoIcon /> },
+            { label: 'Cuisines', path: '/cuisine', icon: <SynagogueIcon /> },
+            { label: 'Ingredients', path: '/ingredient', icon: <BakeryDiningIcon /> },
+            { label: 'Meals', path: '/meal', icon: <LunchDiningIcon /> },
+            { label: 'Quantity', path: '/quantity', icon: <RestaurantMenuIcon /> },
+            { label: 'Instant Recipes', path: '/quick/data', icon: <RamenDiningIcon /> },
+            { label: 'High Rated Recipes', path: '/rated/data', icon: <FastfoodIcon /> },
+          ].map(({ label, path, icon }) => (
+            <ListItem key={label} disablePadding onClick={() => { navigate(path); handleDrawerClose(); }}>
               <ListItemButton>
-              <ListItemIcon>
-                  <SynagogueIcon/> 
-                </ListItemIcon>
-                <ListItemText  primary="Cuisines" />
+                <ListItemIcon>{icon}</ListItemIcon>
+                <ListItemText primary={label} />
               </ListItemButton>
             </ListItem>
-       
-        <ListItem className="menuicon"  disablePadding onClick={()=>navigate("/ingredient")}>
-              <ListItemButton>
-                <ListItemIcon>
-                  <BakeryDiningIcon /> 
-                </ListItemIcon>
-                <ListItemText primary="Ingredients" />
-              </ListItemButton>
-            </ListItem>
-
-            <ListItem className="menuicon"  disablePadding onClick={()=>navigate("/meal")}>
-              <ListItemButton>
-                <ListItemIcon>
-                  <LunchDiningIcon /> 
-                </ListItemIcon>
-                <ListItemText primary="meals" />
-              </ListItemButton>
-            </ListItem>
-
-            <ListItem className="menuicon"  disablePadding onClick={()=>navigate("/quantity")}>
-              <ListItemButton>
-                <ListItemIcon>
-                  <RestaurantMenuIcon /> 
-                </ListItemIcon>
-                <ListItemText primary="Quantity" />
-              </ListItemButton>
-            </ListItem>
-
-            <ListItem className="menuicon"  disablePadding onClick={()=>navigate("/quick/data")}>
-              <ListItemButton>
-                <ListItemIcon>
-                  <RamenDiningIcon /> 
-                </ListItemIcon>
-                <ListItemText primary="Instant Recipes" />
-              </ListItemButton>
-              
-            </ListItem>
-
-            <ListItem className="menuicon"  disablePadding onClick={()=>navigate("/rated/data")}>
-              <ListItemButton>
-                <ListItemIcon>
-                  <FastfoodIcon /> 
-                </ListItemIcon>
-                <ListItemText primary="high rated Recipes" />
-              </ListItemButton>
-            </ListItem>
+          ))}
         </List>
         <Divider />
+        <List>
+          {user ? (
+            <ListItem disablePadding onClick={() => { logout(); handleDrawerClose(); }}>
+              <ListItemButton>
+                <ListItemIcon><LogoutIcon /></ListItemIcon>
+                <ListItemText primary="Logout" />
+              </ListItemButton>
+            </ListItem>
+          ) : (
+            [
+              { label: 'Signup', path: '/signup', icon: <PersonAddIcon /> },
+              { label: 'Login', path: '/login', icon: <LoginIcon /> },
+            ].map(({ label, path, icon }) => (
+              <ListItem key={label} disablePadding onClick={() => { navigate(path); handleDrawerClose(); }}>
+                <ListItemButton>
+                  <ListItemIcon>{icon}</ListItemIcon>
+                  <ListItemText primary={label} />
+                </ListItemButton>
+              </ListItem>
+            ))
+          )}
+        </List>
       </Drawer>
-      <Main open={open}>
+      <Main>
         <DrawerHeader />
-        <Typography >
- 
-     <Routes>
+        <ScrollToTop />
+        <Breadcrumbs />
+        <Routes>
 
- <Route  path="/allrecipe"   element={<ProductedRoute><Recipelist /></ProductedRoute>} />
- <Route  path="/"   element={<Home />} />
  <Route  path="/signup"   element={<Signup />} />
  <Route  path="/login"   element={<Login />} />
  <Route  path="/forgot"   element={<Forgot />} />
  <Route  path="/reset"   element={<Reset />} />
+
+ <Route element={<ProtectedRoute />}>
+ <Route  path="/allrecipe"   element={<Recipelist />} />
+ <Route  path="/"   element={<Home />} />
  <Route  path="/counter"   element={<Counter />} />
  <Route  path="/recipedetails/:id"   element={<RecipeDetails />} />
  <Route  path="/addrecipe"   element={<Addrecipe />} />
@@ -302,7 +266,7 @@ export default function App(){
  <Route  path="/meals/briyani"   element={<Briyani />} />
  <Route  path="/meals/soup"   element={<Soup />} />
  <Route  path="/meals/snacks"   element={<Snacks />} />
- <Route  path="/meals/Sidedish"   element={<Sidedish />} />
+ <Route  path="/meals/sidedish"   element={<Sidedish />} />
  <Route  path="/quick/data"   element={<Quik />} />
  <Route  path="/rated/data"   element={<Rated />} />
  <Route  path="/highquantity/data"   element={<High />} />
@@ -313,26 +277,17 @@ export default function App(){
  <Route  path="/quantity"   element={<Quantity />} />
  <Route  path="/about"   element={<><About /><Footer /></>} />
  <Route  path="*"   element={<Notfound />} />
+ </Route>
  </Routes>
-        </Typography>
       </Main>
-      
     </Box>
-    
-    </div>
     </QueryClientProvider>
-   
   );
 }
 
 
-function ProductedRoute({children}){
-  const token=localStorage.getItem("token");
-  return token?(
-    token?
-    <div>{children}</div>:<h1 className="product">you are unauthorised entry❌</h1>
-  ):(
-    <Navigate raplace to="/signup"/>
-  )
+function ProtectedRoute() {
+  const token = localStorage.getItem("token");
+  return token ? <Outlet /> : <Navigate replace to="/login" />;
 }
 

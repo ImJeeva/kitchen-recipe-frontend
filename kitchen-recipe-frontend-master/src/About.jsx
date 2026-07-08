@@ -76,7 +76,7 @@ export function About() {
         <h2>Ready to Cook?</h2>
         <p>Join our community of food lovers and start exploring delicious recipes today!</p>
         <Link to="/signup">
-          <Button variant="contained" color="primary" size="large">
+          <Button variant="contained" size="large" className="hero-btn-primary">
             Get Started
           </Button>
         </Link>

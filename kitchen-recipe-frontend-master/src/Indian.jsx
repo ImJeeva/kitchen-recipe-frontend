@@ -3,9 +3,9 @@ import { API } from "./global";
 import Card from '@mui/material/Card';
 import { Counter } from "./Counter";
 import { Link } from 'react-router-dom';
-import { useNavigate, useParams } from 'react-router-dom';
-import Button from '@mui/material/Button';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { useParams } from 'react-router-dom';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import PeopleIcon from '@mui/icons-material/People';
 
 const cuisineImages = {
   indian: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=800',
@@ -40,7 +40,6 @@ const cuisineDescriptions = {
 };
 
 export function CuisinePage({ type: propType }) {
-  const navigate = useNavigate();
   const { type: paramType } = useParams();
   const [recipelist, setRecipelist] = useState([]);
 
@@ -64,9 +63,7 @@ export function CuisinePage({ type: propType }) {
   };
 
   return (
-    <div className='btns'>
-      <Button startIcon={<ArrowBackIcon/>} onClick={()=>navigate('/cuisine')} variant='contained' color='primary'>Back</Button>
-      
+    <div className="detail-page">
       <div className="cuisine-header">
         <img className="cuisine-hero" src={cuisineImage} alt={cuisineName} onError={handleImageError} />
         <div className="cuisine-overlay">
@@ -76,7 +73,7 @@ export function CuisinePage({ type: propType }) {
         </div>
       </div>
 
-      <div className="list">
+      <div className="recipe-grid">
         {recipelist.length === 0 ? (
           <div className="no-results">
             <p>No recipes found for this cuisine</p>
@@ -96,28 +93,26 @@ function CuisineData({ data }) {
   };
 
   return (
-    <div className="page">
-      <Card className="card">
-        <Link to={`/recipedetails/${data._id}`}>
-          <img className="img" src={data.image} alt={data.title} loading="lazy" onError={handleImageError} />
+    <Card className="recipe-card" elevation={0}>
+      <Link to={`/recipedetails/${data._id}`} className="recipe-card-media">
+        <img src={data.image} alt={data.title} loading="lazy" onError={handleImageError} />
+        {data.cuisines && <span className="recipe-card-tag">{data.cuisines}</span>}
+      </Link>
+      <div className="recipe-card-body">
+        <Link className="recipe-card-title-link" to={`/recipedetails/${data._id}`}>
+          <h3>{data.title}</h3>
         </Link>
-        <div className="detail">
-          <p className="title">{data.cuisines} cuisine</p>
-          <Link className='Link' to={`/recipedetails/${data._id}`}>
-            <h3 className="name">{data.title}</h3>
-          </Link>
-          <p className="de" style={{fontSize: '14px', color: '#666'}}>{data.discription?.substring(0, 50)}...</p>
-          <div className="recipe-meta">
-            <span className="meta-item">⏱ {data.cookingtime}</span>
-            <span className="meta-item">👥 {data.servings}</span>
-          </div>
-          <div className="count">
-            <p className="de">{data.rating}</p>
-            <Counter />
-          </div>
+        <p className="recipe-card-desc">{data.discription?.substring(0, 60)}...</p>
+        <div className="recipe-card-meta">
+          {data.cookingtime && <span><AccessTimeIcon fontSize="inherit" /> {data.cookingtime}</span>}
+          {data.servings && <span><PeopleIcon fontSize="inherit" /> {data.servings} servings</span>}
         </div>
-      </Card>
-    </div>
+        <div className="recipe-card-footer">
+          <span className="recipe-card-rating">{data.rating}</span>
+          <Counter />
+        </div>
+      </div>
+    </Card>
   );
 }
 

@@ -8,12 +8,11 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Input from '@mui/material/Input';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import RestaurantIcon from '@mui/icons-material/Restaurant';
+import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
 
 export function Signup() {
   const navigate = useNavigate();
@@ -21,16 +20,14 @@ export function Signup() {
   const [showPassword, setShowPassword] = useState(false);
 
   const formValidationSchema = yup.object({
-    firstname: yup.string().required("First name is required"),
-    lastname: yup.string().required("Last name is required"),
+    username: yup.string().required("Username is required").min(3, "Username must be 3+ characters").matches(/^[a-zA-Z0-9_]+$/, "Letters, numbers, and underscores only"),
     email: yup.string().required("Email is required").email("Enter valid email"),
     password: yup.string().required("Password is required").min(8, "Password must be 8+ characters"),
   });
 
   const { handleChange, handleSubmit, values, handleBlur, touched, errors } = useFormik({
     initialValues: {
-      firstname: "",
-      lastname: "",
+      username: "",
       email: "",
       password: ""
     },
@@ -72,88 +69,80 @@ export function Signup() {
   const handleMouseDownPassword = (event) => event.preventDefault();
 
   return (
-    <div className="signup-page">
-      <div className="signup-container">
-        <div className="signup-icon">
-          <RestaurantIcon />
+    <div className="auth-page">
+      <div className="auth-container">
+        <div className="auth-icon">
+          <RestaurantMenuIcon />
         </div>
-        <h1 className="signup-title">Create Account</h1>
-        <p className="signup-subtitle">Join our cooking community</p>
+        <h1 className="auth-title">Create Account</h1>
+        <p className="auth-subtitle">Join our cooking community</p>
 
         {show === "success" ? null : (
-          <div className='sign1'>
-            <p className='sign'>User already exists</p>
+          <div className='auth-banner'>
+            <p>User already exists</p>
           </div>
         )}
 
-        <form className='signup' onSubmit={handleSubmit}>
-          <div className="form-row">
-            <TextField
-              onBlur={handleBlur}
-              error={touched.firstname && errors.firstname}
-              helperText={touched.firstname && errors.firstname ? errors.firstname : null}
-              value={values.firstname}
-              name="firstname"
-              onChange={handleChange}
-              label="First Name"
-              placeholder="Enter first name"
-            />
-            <TextField
-              onBlur={handleBlur}
-              error={touched.lastname && errors.lastname}
-              helperText={touched.lastname && errors.lastname ? errors.lastname : null}
-              value={values.lastname}
-              name="lastname"
-              onChange={handleChange}
-              label="Last Name"
-              placeholder="Enter last name"
-            />
-          </div>
+        <form className='auth-form' onSubmit={handleSubmit}>
+          <TextField
+            onBlur={handleBlur}
+            error={touched.username && Boolean(errors.username)}
+            helperText={touched.username && errors.username ? errors.username : null}
+            value={values.username}
+            name="username"
+            onChange={handleChange}
+            label="Username"
+            placeholder="Choose a username"
+            variant="outlined"
+            fullWidth
+          />
 
           <TextField
             onBlur={handleBlur}
-            error={touched.email && errors.email}
+            error={touched.email && Boolean(errors.email)}
             helperText={touched.email && errors.email ? errors.email : null}
             value={values.email}
             name="email"
             onChange={handleChange}
             label="Email Address"
             placeholder="Enter email address"
+            variant="outlined"
             fullWidth
           />
 
-          <Input
+          <TextField
             type={showPassword ? 'text' : 'password'}
             value={values.password}
             name="password"
             onChange={handleChange}
             onBlur={handleBlur}
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword}>
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            }
+            error={touched.password && Boolean(errors.password)}
+            helperText={touched.password && errors.password ? errors.password : null}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword} edge="end">
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
             placeholder="Create password (min 8 characters)"
             fullWidth
             label="Password"
+            variant="outlined"
           />
-          {touched.password && errors.password && (
-            <span className="error-text">{errors.password}</span>
-          )}
 
           <Button
             type="submit"
-            color={show}
             variant='contained'
-            className="signup-btn"
+            className="auth-submit-btn"
           >
             Create Account
           </Button>
         </form>
 
-        <p className='login-link'>
+        <p className='auth-switch'>
           Already have an account? <span onClick={() => navigate("/login")}>Sign In</span>
         </p>
       </div>

@@ -1,134 +1,87 @@
-
-
 import { useState } from "react";
-import { useEffect } from "react";
-
 import { API } from "./global";
 import { useQuery } from "@tanstack/react-query";
 import { Recipe } from "./Recipe";
-import { queryClient } from "./App";
+import SearchIcon from '@mui/icons-material/Search';
+import InputAdornment from '@mui/material/InputAdornment';
+import TextField from '@mui/material/TextField';
 
-
-
-function checkAuth(res){
-  if(res.status===401){
+function checkAuth(res) {
+  if (res.status === 401) {
     throw Error("unauthorised");
-  }else{
-return res.json()
   }
+  return res.json();
 }
-function logout(){
+
+function logout() {
   localStorage.clear();
-  window.location.href="/signup"
-}
-export function Recipelist () {
-
-//without tanstack query-> version => 1 => LOW PERFOMANCE
-
-//   const [obj, setObject] = useState([]);
-// const getMovies=()=>{
-//   fetch(`${API}/allrecipe`,{
-//               headers:{
-//                 "x-auth-token":localStorage.getItem("token")
-//                }
-//              })
-//       .then((res) => checkAuth(res))
-//       .then((mvs) => setObject(mvs))
-//       .catch(err=>logout())
-// }
-
-//   useEffect(() => getMovies(), []);
-
-
-//with tanstack query-> version => 2 =>HIGH PERFOMANCE
-
-//tanstack-query-method
-
-const { isLoading ,isFetching, data: obj } = useQuery (
-  //cache name
-  ["recipes"], 
-  //API request
-  async () => 
-    //PUSH TECHNIQUE:
-    //ithula movielist ah load panrapave moviedetails ah vangiruvom so perfomance innum best ah irukum.
-
-    // const recipe= await fetch(`${API}/allrecipe`,{
-    //               headers:{"x-auth-token":localStorage.getItem("token")}})
-    //               .then((res) => checkAuth(res))
-    //               .catch(err=>logout());
-    //    recipe.forEach(element => 
-    //     queryClient.setQueryData(["recipes",element._id], element)
-    //    );
-    //     return recipe;
-
-     //NORMAL METHOD:
-    
-        await fetch(`${API}/allrecipe`,{
-          headers:{"x-auth-token":localStorage.getItem("token")}})
-          .then((res) => checkAuth(res))
-          .catch(err=>logout()),
-
-      
-
-    //options
-   {
-    staleTime: 10000, //3s la ithu stale akum
-
-    // refetchInterval: 5000, //every 5s request pokum
-
-    retry:3 //ithu suppose reqest fail achina 3 times call akum
-
-   }               
- );
-
-//  console.log("🎉",obj)
-
-if(isLoading){
-  return<h3>Loading...</h3>
+  window.location.href = "/login";
 }
 
+export function Recipelist() {
+  const [search, setSearch] = useState("");
+
+  const { isLoading, data: obj } = useQuery(
+    ["recipes"],
+    async () =>
+      await fetch(`${API}/allrecipe`, {
+        headers: { "x-auth-token": localStorage.getItem("token") }
+      })
+        .then((res) => checkAuth(res))
+        .catch(() => logout()),
+    { staleTime: 10000, retry: 3 }
+  );
+
+  if (isLoading) {
+    return (
+      <div className="recipe-loading">
+        <div className="recipe-skeleton-grid">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div className="recipe-skeleton-card" key={i} />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  const filtered = (obj || []).filter((mv) =>
+    mv.title?.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
- 
-  
-    <div>
-       <div  className="all">
-        {obj.map((mv) =>(
-      // Normal method:
-        <Recipe key={mv.id} 
-        data={mv} 
-        id={mv._id} 
-          />
-
-       //prefetch method:("HIGH PERFOMANCE")
-      // PROS:
-       //ithu namma antha recipe mela hover pannum pothe request send pannitum
-       // so appram namma atha click pannum pothu takkunu varum
-       //CONS:
-       //ithu data athikama consume pannum because every hover it send to the request.
-
-          // <div
-          // onMouseEnter={() => {
-          //   queryClient.prefetchQuery(
-          //     ["recipes", mv._id],
-          //     async () =>
-          //       await fetch(`${API}/${mv._id}`, {
-          //         method: "GET",
-          //       }).then((data) => data.json())
-          //   );
-          // }}
-          // >
-          //    <Recipe key={mv.id} 
-          //     data={mv} 
-          //      id={mv._id} 
-          //    />
-          // </div>
-
-
-          ))}
+    <div className="recipe-list-page">
+      <div className="recipe-list-header">
+        <div>
+          <h1>All Recipes</h1>
+          <p>{obj?.length || 0} recipes shared by the community</p>
+        </div>
+        <TextField
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search recipes..."
+          size="small"
+          className="recipe-search"
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon fontSize="small" />
+              </InputAdornment>
+            ),
+          }}
+        />
       </div>
-      
+
+      {filtered.length === 0 ? (
+        <div className="no-results">
+          <p>No recipes match "{search}"</p>
+        </div>
+      ) : (
+        <div className="recipe-grid">
+          {filtered.map((mv) => (
+            <Recipe key={mv._id} data={mv} />
+          ))}
+        </div>
+      )}
     </div>
-   
   );
 }

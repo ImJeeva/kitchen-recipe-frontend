@@ -9,11 +9,10 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useStateValue } from './StateProvider';
 import InputAdornment from '@mui/material/InputAdornment';
-import Input from '@mui/material/Input';
 import IconButton from '@mui/material/IconButton';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import RestaurantIcon from '@mui/icons-material/Restaurant';
+import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
 
 export function Login() {
   const [{ user }, dispatch] = useStateValue();
@@ -23,11 +22,10 @@ export function Login() {
 
   const { handleChange, handleSubmit, values } = useFormik({
     initialValues: {
-      email: "",
+      username: "",
       password: ""
     },
     onSubmit: (value) => {
-      console.log(value);
       addlogin(value);
     }
   });
@@ -39,7 +37,6 @@ export function Login() {
       body: JSON.stringify(value)
     });
     if (data.status == 401) {
-      console.log("error");
       setFormstate("error");
       toast.error('Invalid Credentials!', {
         position: "top-right",
@@ -49,8 +46,9 @@ export function Login() {
     } else {
       setFormstate("success");
       const result = await data.json();
-      console.log(result);
       localStorage.setItem("token", result.token);
+      localStorage.setItem("username", result.username || values.username);
+      dispatch({ type: "SET_USER", user: result.username || values.username });
       toast.success('Login Successful!', {
         position: "top-right",
         autoClose: 2000,
@@ -60,74 +58,69 @@ export function Login() {
     }
   };
 
-  const signin = e => {
-    dispatch({
-      type: "SET_USER",
-      user: values.email,
-    });
-  };
-
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleMouseDownPassword = (event) => event.preventDefault();
 
   return (
-    <div className="login-page">
-      <div className="login-container">
-        <div className="login-icon">
-          <RestaurantIcon />
+    <div className="auth-page">
+      <div className="auth-container">
+        <div className="auth-icon">
+          <RestaurantMenuIcon />
         </div>
-        <h1 className="login-title">Welcome Back</h1>
-        <p className="login-subtitle">Sign in to your account</p>
+        <h1 className="auth-title">Welcome Back</h1>
+        <p className="auth-subtitle">Sign in to your account</p>
 
         {formstate === "success" ? null : (
-          <div className='sign1'>
-            <p className='sign'>Invalid Credentials</p>
+          <div className='auth-banner'>
+            <p>Invalid Credentials</p>
           </div>
         )}
 
-        <form className='login' onSubmit={handleSubmit}>
+        <form className='auth-form' onSubmit={handleSubmit}>
           <TextField
-            value={values.email}
-            name="email"
+            value={values.username}
+            name="username"
             onChange={handleChange}
-            label="Email Address"
-            placeholder="Enter your email"
+            label="Username"
+            placeholder="Enter your username"
+            variant="outlined"
             fullWidth
           />
-          
-          <Input
+
+          <TextField
             type={showPassword ? 'text' : 'password'}
             value={values.password}
             name="password"
             onChange={handleChange}
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword}>
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            }
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword} edge="end">
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
             placeholder="Enter your password"
             fullWidth
             label="Password"
+            variant="outlined"
           />
 
           <Button
-            onClick={signin}
             type="submit"
-            color={formstate}
             variant='contained'
-            className="login-btn"
+            className="auth-submit-btn"
           >
-            {formstate === "success" ? "Sign In" : "Retry"}
+            Sign In
           </Button>
         </form>
 
-        <p className='forgot-link' onClick={() => navigate("/forgot")}>
+        <p className='auth-forgot' onClick={() => navigate("/forgot")}>
           Forgot Password?
         </p>
 
-        <p className='signup-link'>
+        <p className='auth-switch'>
           Don't have an account? <span onClick={() => navigate("/signup")}>Sign Up</span>
         </p>
       </div>

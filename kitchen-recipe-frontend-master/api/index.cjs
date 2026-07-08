@@ -35,20 +35,20 @@ async function getDB() {
 
 router.post('/signup', async (req, res) => {
   try {
-    const { firstname, lastname, email, password } = req.body;
+    const { username, email, password } = req.body;
     const db = await getDB();
-    
-    const existingUser = await db.collection('signup').findOne({ email });
+
+    const existingUser = await db.collection('signup').findOne({ $or: [{ email }, { username }] });
     if (existingUser) {
       return res.status(400).json({ message: 'user already exists' });
     }
-    
+
     if (password.length < 8) {
       return res.status(400).json({ message: 'password must be atleast 8 charecters' });
     }
-    
+
     const hash = await bcrypt.hash(password, 10);
-    await db.collection('signup').insertOne({ firstname, lastname, email, password: hash });
+    await db.collection('signup').insertOne({ username, email, password: hash });
     return res.status(200).json({ message: 'Signup successful' });
   } catch (err) {
     console.error('Signup error:', err.message);
@@ -58,18 +58,18 @@ router.post('/signup', async (req, res) => {
 
 router.post('/userLogin', async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
     const db = await getDB();
-    
-    const user = await db.collection('signup').findOne({ email });
+
+    const user = await db.collection('signup').findOne({ username });
     if (!user) {
       return res.status(401).json({ message: 'invalid credentials' });
     }
-    
+
     const match = await bcrypt.compare(password, user.password);
     if (match) {
       const token = jwt.sign({ id: user._id }, 'my_secret_and_private_key');
-      return res.status(200).json({ message: 'login successful', token });
+      return res.status(200).json({ message: 'login successful', token, username: user.username });
     } else {
       return res.status(401).json({ message: 'invalid credentials' });
     }
