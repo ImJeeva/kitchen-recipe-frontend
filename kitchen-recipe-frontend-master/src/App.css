@@ -1502,6 +1502,11 @@ bottom:80px;
   transform: translateY(-1px);
 }
 
+.auth-submit-btn.Mui-disabled {
+  opacity: 0.7;
+  color: #fff !important;
+}
+
 @keyframes shimmer {
   0% { background-position: 0% 0; }
   100% { background-position: 200% 0; }

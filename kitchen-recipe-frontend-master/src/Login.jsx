@@ -13,12 +13,14 @@ import IconButton from '@mui/material/IconButton';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export function Login() {
   const [{ user }, dispatch] = useStateValue();
   const navigate = useNavigate();
   const [formstate, setFormstate] = useState("success");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { handleChange, handleSubmit, values } = useFormik({
     initialValues: {
@@ -31,30 +33,35 @@ export function Login() {
   });
 
   const addlogin = async (value) => {
-    const data = await fetch(`${API}/userLogin`, {
-      method: "POST",
-      headers: { "Content-type": "application/json" },
-      body: JSON.stringify(value)
-    });
-    if (data.status == 401) {
-      setFormstate("error");
-      toast.error('Invalid Credentials!', {
-        position: "top-right",
-        autoClose: 2000,
-        color: "white"
+    setIsLoading(true);
+    try {
+      const data = await fetch(`${API}/userLogin`, {
+        method: "POST",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify(value)
       });
-    } else {
-      setFormstate("success");
-      const result = await data.json();
-      localStorage.setItem("token", result.token);
-      localStorage.setItem("username", result.username || values.username);
-      dispatch({ type: "SET_USER", user: result.username || values.username });
-      toast.success('Login Successful!', {
-        position: "top-right",
-        autoClose: 2000,
-        color: "white"
-      });
-      navigate("/allrecipe");
+      if (data.status == 401) {
+        setFormstate("error");
+        toast.error('Invalid Credentials!', {
+          position: "top-right",
+          autoClose: 2000,
+          color: "white"
+        });
+      } else {
+        setFormstate("success");
+        const result = await data.json();
+        localStorage.setItem("token", result.token);
+        localStorage.setItem("username", result.username || values.username);
+        dispatch({ type: "SET_USER", user: result.username || values.username });
+        toast.success('Login Successful!', {
+          position: "top-right",
+          autoClose: 2000,
+          color: "white"
+        });
+        navigate("/");
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -111,8 +118,9 @@ export function Login() {
             type="submit"
             variant='contained'
             className="auth-submit-btn"
+            disabled={isLoading}
           >
-            Sign In
+            {isLoading ? <CircularProgress size={22} thickness={5} sx={{ color: '#fff' }} /> : 'Sign In'}
           </Button>
         </form>
 
